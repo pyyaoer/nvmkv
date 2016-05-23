@@ -26,8 +26,8 @@ int main(int argc, char **argv)
     char                 *key_str = NULL;
     char                 *value_str = NULL;
     char                 *value_str2 = NULL;
-    char                 *value_str3 = NULL;
-    char                 *value_str4 = NULL;
+    char                 *value_emp = NULL;
+    char                 *value_emp2 = NULL;
     nvm_kv_key_info_t     key_info;
     int                   optind = 0;
     int                   ret = 0;
@@ -66,27 +66,27 @@ int main(int argc, char **argv)
     memset(value_str2, 'b', value_len/2);
 
 	// Malloc value buffer for get
-    posix_memalign((void**) &value_str3, SECTOR_SIZE, value_len);
-    memset(value_str3, 0, value_len);
+    posix_memalign((void**) &value_emp, SECTOR_SIZE, value_len);
+    memset(value_emp, 0, value_len);
 
-    posix_memalign((void**) &value_str4, SECTOR_SIZE, value_len);
-    memset(value_str4, 0, value_len);
+    posix_memalign((void**) &value_emp2, SECTOR_SIZE, value_len);
+    memset(value_emp2, 0, value_len);
 
 	// Put
     ret = nvm_kv_put(kv_id, pool_id, (nvm_kv_key_t *) key_str, strlen((char *) key_str), value_str, strlen(value_str), 0,true, 0);
 	printf ("\tPut: %s\n", value_str);
 
 	// Get
-	ret = nvm_kv_get(kv_id, pool_id, (nvm_kv_key_t *) key_str, strlen((char *) key_str), value_str3, value_len, read_exact, &key_info);
-	printf("\tGet: %s\n", value_str3);
+	ret = nvm_kv_get(kv_id, pool_id, (nvm_kv_key_t *) key_str, strlen((char *) key_str), value_emp, value_len, read_exact, &key_info);
+	printf("\tGet: %s\n", value_emp);
 
 	// Put
     ret = nvm_kv_put(kv_id, pool_id, (nvm_kv_key_t *) key_str, strlen((char *) key_str), value_str2, strlen(value_str2), 0, true, 0);
 	printf ("\tPut: %s\n", value_str2);
 
 	// Get
-	ret = nvm_kv_get(kv_id, pool_id, (nvm_kv_key_t *) key_str, strlen((char *) key_str), value_str4, value_len, read_exact, &key_info);
-	printf("\tGet: %s\n", value_str4);
+	ret = nvm_kv_get(kv_id, pool_id, (nvm_kv_key_t *) key_str, strlen((char *) key_str), value_emp2, value_len, read_exact, &key_info);
+	printf("\tGet: %s\n", value_emp2);
 
 	// Close the KV Store
     ret = nvm_kv_close(kv_id);
@@ -94,6 +94,8 @@ int main(int argc, char **argv)
 test_exit:
     free(value_str);
     free(value_str2);
+	free(value_emp);
+	free(value_emp2);
     free(key_str);
     close(fd);
 
